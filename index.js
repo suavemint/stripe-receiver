@@ -45,7 +45,7 @@ express().use(express.static(path.join(__dirname, 'public')))
         }).catch( serr => console.log('sub error: ', serr));
       }).catch(err => console.log('customer error: ', err));
     }
-    res.send('');
+    resp.send('');
     //return resp.status(200);
     //resp.redirect('back');  // just redirects to get...
     //resp.end();  // just redirects to GET...
