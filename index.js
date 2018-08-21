@@ -62,34 +62,35 @@ express().use(express.static(path.join(__dirname, 'public')))
     console.log("signature retrieved from webhook? ", signature);
     console.log("event in body? ", req.body);
     try {
-      let event = stripe.webhooks.constructEvent(req.body, signature, endpoint_secret); 
-      console.log("event generated? ", event);
+      stripe.webhooks.constructEvent(req.body, signature, endpoint_secret).then(event => { 
+        console.log("event generated? ", event);
 
-      if(event.type === 'invoice.payment_succeeded'){
-        // increment payments count
-        // 1. get subscription line item
-        console.log("going to incr... can see event.data.object.lines.data? ", event.data.object.lines.data);
+        if(event.type === 'invoice.payment_succeeded'){
+          // increment payments count
+          // 1. get subscription line item
+          console.log("going to incr... can see event.data.object.lines.data? ", event.data.object.lines.data);
 
-        // 2. get metadata value
-        let sub = event.data.object.lines.data[0];
-        console.log("going to incr...can see metadata? ", sub.metadata);
-        if(sub.metadata.installments_paid){
-          // Get count
-          let count = parseInt(sub.metadata.installments_paid);
-          console.log("parsed count? ", count);
-          count++;
+          // 2. get metadata value
+          let sub = event.data.object.lines.data[0];
+          console.log("going to incr...can see metadata? ", sub.metadata);
+          if(sub.metadata.installments_paid){
+            // Get count
+            let count = parseInt(sub.metadata.installments_paid);
+            console.log("parsed count? ", count);
+            count++;
 
-          stripe.subscriptions.retrieve(sub.id).then( subscription => {
-            console.log("subscription retrieved from stripe.subscriptions? ", subscription);
-            subscription.metadata.installments_paid = count;
-            subscription.save()
+            stripe.subscriptions.retrieve(sub.id).then( subscription => {
+              console.log("subscription retrieved from stripe.subscriptions? ", subscription);
+              subscription.metadata.installments_paid = count;
+              subscription.save()
 
-            if(count >= 2){
-              subscription.delete() 
-            }
-          });
+              if(count >= 2){
+                subscription.delete() 
+              }
+            });
+          }
         }
-      }
+      });
     }
     catch(err){
       resp.status(400).end(); 
