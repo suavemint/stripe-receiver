@@ -2,13 +2,6 @@ const express = require('express');
 const path = require('path');
 const bodyparser = require('body-parser');
 
-// Set up db connection.
-const { Pool } = require('pg');
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: true
-});
-
 const PORT = process.env.PORT || 5000;
 
 // Currently config is empty, so use default private testing key
