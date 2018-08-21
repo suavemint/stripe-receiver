@@ -45,8 +45,9 @@ express().use(express.static(path.join(__dirname, 'public')))
         }).catch( serr => console.log('sub error: ', serr));
       }).catch(err => console.log('customer error: ', err));
     }
-    resp.send('');
+    //resp.send('');  // just gives blank page
     //return resp.status(200);
+    resp.status(200);
     //resp.redirect('back');  // just redirects to get...
-    //resp.end();  // just redirects to GET...
+    //resp.end();  // just gives blank page
   }).listen(PORT, () => console.log(`Listening on port ${PORT}...`));
