@@ -26,7 +26,7 @@ express().use(express.static(path.join(__dirname, 'public')))
         source: req.body.stripeToken 
       }).then(function(charge){
         console.log("Charge object returned? ", charge); 
-        return resp.status(200);
+        resp.status(200).json({});
       }).catch(cerr => console.log('charge error: ', cerr));
     }
     else {
@@ -42,13 +42,13 @@ express().use(express.static(path.join(__dirname, 'public')))
           ]
         }).then(function(sub){
           console.log("subscription? ", sub); 
-          return resp.status(200);
+          resp.status(200).json({});
         }).catch( serr => console.log('sub error: ', serr));
       }).catch(err => console.log('customer error: ', err));
     }
     //resp.send('');  // just gives blank page
     //return resp.status(200);
-    return resp.status(200);
+    //return resp.status(200);
     //resp.redirect('back');  // just redirects to get...
     //resp.end();  // just gives blank page
   }).listen(PORT, () => console.log(`Listening on port ${PORT}...`));
