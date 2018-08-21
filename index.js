@@ -27,7 +27,7 @@ express().use(express.static(path.join(__dirname, 'public')))
           amount: 299700,
           currency: 'usd',
           description: 'test single charge',
-          source: req.body.stripeToken
+          source: customer.id 
         }).then(function(charge){
           console.log("Charge object returned? ", charge); 
         });
