@@ -86,14 +86,15 @@ express().use(express.static(path.join(__dirname, 'public')))
           console.log("parsed count? ", count);
           count++;
 
-          let subscription = await stripe.subscriptions.retrieve(sub.id);
-          console.log("subscription retrieved from stripe.subscriptions? ", subscription);
-          subscription.metadata.installments_paid = count;
-          subscription.save()
+          stripe.subscriptions.retrieve(sub.id).then( subscription => {
+            console.log("subscription retrieved from stripe.subscriptions? ", subscription);
+            subscription.metadata.installments_paid = count;
+            subscription.save()
 
-          if(count >= 2){
-            subscription.delete() 
-          }
+            if(count >= 2){
+              subscription.delete() 
+            }
+          });
         }
       }
     }
