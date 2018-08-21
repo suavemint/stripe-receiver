@@ -46,5 +46,5 @@ express().use(express.static(path.join(__dirname, 'public')))
       }).catch(err => console.log('customer error: ', err));
     }
     //return resp.status(200);
-    resp.end();
+    resp.redirect('back');
   }).listen(PORT, () => console.log(`Listening on port ${PORT}...`));
