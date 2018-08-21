@@ -38,6 +38,6 @@ express().use(express.static(path.join(__dirname, 'public')))
         ]
       }).then(function(sub){
         console.log("subscription? ", sub); 
-      });
-    });
+      }).catch( serr => console.log('sub error: ', serr));
+    }).catch(err => console.log('c err: ', err));
   }).listen(PORT, () => console.log(`Listening on port ${PORT}...`));
