@@ -36,6 +36,8 @@ express().use(express.static(path.join(__dirname, 'public')))
         items: [
           {plan: 'prod_DS9nvwutZuzrce'}
         ]
+      }).then(function(sub){
+        console.log("subscription? ", sub); 
       });
     });
   }).listen(PORT, () => console.log(`Listening on port ${PORT}...`));
