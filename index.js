@@ -45,5 +45,6 @@ express().use(express.static(path.join(__dirname, 'public')))
         }).catch( serr => console.log('sub error: ', serr));
       }).catch(err => console.log('customer error: ', err));
     }
-    return resp.status(200);
+    //return resp.status(200);
+    resp.end();
   }).listen(PORT, () => console.log(`Listening on port ${PORT}...`));
