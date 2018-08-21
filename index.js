@@ -12,7 +12,7 @@ express().use(express.static(path.join(__dirname, 'public')))
     console.log("POST processed? ", resp.body);
 
     const charge = stripe.charges.create({
-      amount: parseFloat(resp.body.amount);
+      amount: parseFloat(resp.body.amount),
       currency: 'usd',
       description: 'Testing single charge',
       source: resp.body.stripeToken
