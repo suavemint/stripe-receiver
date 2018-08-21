@@ -16,7 +16,7 @@ express().use(express.static(path.join(__dirname, 'public')))
   }).post('/process_payment', (req, resp) => {
     console.log("POST form body? ", req.body);
 
-    if(req.body.singlePayment){
+    if(req.body.singlePayment === true){
       console.log("FOUND SINGLE PAYMENT!"); 
 
       stripe.charges.create({
@@ -29,6 +29,7 @@ express().use(express.static(path.join(__dirname, 'public')))
       }).catch(cerr => console.log('charge error: ', cerr));
     }
     else {
+      console.log("FOUND SUBSCRIPTION");
       stripe.customers.create({
         email: req.body.stripeEmail,
         source: req.body.stripeToken
