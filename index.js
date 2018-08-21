@@ -85,15 +85,16 @@ express().use(express.static(path.join(__dirname, 'public')))
               subscription.save()
 
               if(count >= 2){
-                subscription.delete() 
+                subscription.delete();
               }
+              resp.status(200);
             });
           }
         }
       });
     }
     catch(err){
-      resp.status(400).end(); 
+      resp.status(400).json({error: err}); 
     }
 
     //resp.json({received: true});
