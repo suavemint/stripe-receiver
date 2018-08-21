@@ -37,7 +37,7 @@ express().use(express.static(path.join(__dirname, 'public')))
         stripe.subscriptions.create({
           customer: customer.id,
           items: [
-            {plan: 'plan_DSLCqIDNQcYVc4'}
+            {plan: 'prod_DSKBNl92IpGi6J'}
           ]
         }).then(function(sub){
           console.log("subscription? ", sub); 
@@ -45,4 +45,5 @@ express().use(express.static(path.join(__dirname, 'public')))
         }).catch( serr => console.log('sub error: ', serr));
       }).catch(err => console.log('customer error: ', err));
     }
+    res.status(200);
   }).listen(PORT, () => console.log(`Listening on port ${PORT}...`));
