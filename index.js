@@ -34,7 +34,7 @@ express().use(express.static(path.join(__dirname, 'public')))
       stripe.subscriptions.create({
         customer: customer.id,
         items: [
-          {plan: 'prod_DS9nvwutZuzrce'}
+          {plan: 'prod_DSKBNl92IpGi6J'}
         ]
       }).then(function(sub){
         console.log("subscription? ", sub); 
