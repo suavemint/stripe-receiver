@@ -1,4 +1,5 @@
 {
   "secret_key": "sk_test_861hUPjcwi4xugctXZruPZEf",
-  "public_key": "pk_test_2YOIZqgQViMcqNpHxAjt1iSq"
+  "public_key": "pk_test_2YOIZqgQViMcqNpHxAjt1iSq",
+  "endpoint_secret": "whsec_pBeCtfkam09TSuG0EsDuPtkDOQm1lMWC"
 }
