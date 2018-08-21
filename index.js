@@ -9,21 +9,21 @@ express().use(express.static(path.join(__dirname, 'public')))
   .get('/', (req, resp) => {
     resp.json({'hi': 'there'});
   }).post('/process_single_payment', (req, resp) => {
-    console.log("POST processed? ", resp.body);
+    console.log("POST processed? ", req.body);
 
     const charge = stripe.charges.create({
-      amount: parseFloat(resp.body.amount),
+      amount: parseFloat(req.body.amount),
       currency: 'usd',
       description: 'Testing single charge',
-      source: resp.body.stripeToken
+      source: req.body.stripeToken
     });
 
   }).post('/process_subscription_payment', (req, resp) => {
     // For a subscription, create a Stripe Customer instance before creating a Subscription instance.
-    console.log("POST form body? ", resp.body);
+    console.log("POST form body? ", req.body);
     const customer = stripe.customer.create({
-      email: resp.body.stripeEmail,
-      source: resp.body.stripeToken
+      email: req.body.stripeEmail,
+      source: req.body.stripeToken
     });
 /*
     const plan = stripe.plans.create({
