@@ -14,7 +14,7 @@ express().use(express.static(path.join(__dirname, 'public')))
   .get('/', (req, resp) => {
     resp.json({'hi': 'there'});
   }).post('/process_single_payment', (req, resp) => {
-    console.log("POST processed? ", req.body);
+    //console.log("POST processed? ", req.body);
 
     const charge = stripe.charges.create({
       amount: parseFloat(req.body.amount),
@@ -25,7 +25,7 @@ express().use(express.static(path.join(__dirname, 'public')))
 
   }).post('/process_subscription_payment', (req, resp) => {
     // For a subscription, create a Stripe Customer instance before creating a Subscription instance.
-    console.log("POST form body? ", req);
+    //console.log("POST form body? ", req);
     const customer = stripe.customers.create({
       email: req.body.stripeEmail,
       source: req.body.stripeToken
@@ -39,9 +39,11 @@ express().use(express.static(path.join(__dirname, 'public')))
       amount: 10000
     });
     */
-    
+    console.log("customer has id or token? ", customer); 
     const subscription = stripe.subscriptions.create({
       customer: customer.id,
-      items: {plan: 'prod_DS9nvwutZuzrce'}
+      items: [
+        {plan: 'prod_DS9nvwutZuzrce'}
+      ]
     });
   }).listen(PORT, () => console.log(`Listening on port ${PORT}...`));
