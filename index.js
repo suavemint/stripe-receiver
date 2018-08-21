@@ -13,31 +13,36 @@ express().use(express.static(path.join(__dirname, 'public')))
   .use(bodyparser.urlencoded({extended: true}))
   .get('/', (req, resp) => {
     resp.json({'hi': 'there'});
-  }).post('/process_single_payment', (req, resp) => {
-    //console.log("POST processed? ", req.body);
+  }).post('/process_payment', (req, resp) => {
+    console.log("POST form body? ", req.body);
 
-    const charge = stripe.charges.create({
-      amount: parseFloat(req.body.amount),
-      currency: 'usd',
-      description: 'Testing single charge',
-      source: req.body.stripeToken
-    });
-
-  }).post('/process_subscription_payment', (req, resp) => {
-    // For a subscription, create a Stripe Customer instance before creating a Subscription instance.
-    //console.log("POST form body? ", req);
     stripe.customers.create({
       email: req.body.stripeEmail,
       source: req.body.stripeToken
     }).then(function(customer){
+      if(req.body.singlePayment){
+        console.log("FOUND SINGLE PAYMENT!"); 
+
+        stripe.charges.create({
+          amount: 299700,
+          currency: 'usd',
+          description: 'test single charge',
+          source: req.body.stripeToken
+        }).then(function(charge){
+          console.log("Charge object returned? ", charge); 
+        });
+      }
+      else {
+        stripe.subscriptions.create({
+          customer: customer.id,
+          items: [
+            {plan: 'plan_DSLCqIDNQcYVc4'}
+          ]
+        }).then(function(sub){
+          console.log("subscription? ", sub); 
+          resp.status(200);
+        }).catch( serr => console.log('sub error: ', serr));
+      }
       console.log("customer has id or token? ", customer); 
-      stripe.subscriptions.create({
-        customer: customer.id,
-        items: [
-          {plan: 'plan_DSLCqIDNQcYVc4'}
-        ]
-      }).then(function(sub){
-        console.log("subscription? ", sub); 
-      }).catch( serr => console.log('sub error: ', serr));
     }).catch(err => console.log('c err: ', err));
   }).listen(PORT, () => console.log(`Listening on port ${PORT}...`));
