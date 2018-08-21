@@ -26,24 +26,16 @@ express().use(express.static(path.join(__dirname, 'public')))
   }).post('/process_subscription_payment', (req, resp) => {
     // For a subscription, create a Stripe Customer instance before creating a Subscription instance.
     //console.log("POST form body? ", req);
-    const customer = stripe.customers.create({
+    stripe.customers.create({
       email: req.body.stripeEmail,
       source: req.body.stripeToken
-    });
-/*
-    const plan = stripe.plans.create({
-      product: 'prod_DSJtPFPvfe9EPD',
-      nickname: 'Test Sub #1',
-      currency: 'usd',
-      interval: 'month',
-      amount: 10000
-    });
-    */
-    console.log("customer has id or token? ", customer); 
-    const subscription = stripe.subscriptions.create({
-      customer: customer.id,
-      items: [
-        {plan: 'prod_DS9nvwutZuzrce'}
-      ]
+    }).then(function(customer){
+      console.log("customer has id or token? ", customer); 
+      const subscription = stripe.subscriptions.create({
+        customer: customer.id,
+        items: [
+          {plan: 'prod_DS9nvwutZuzrce'}
+        ]
+      });
     });
   }).listen(PORT, () => console.log(`Listening on port ${PORT}...`));
