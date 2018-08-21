@@ -61,10 +61,11 @@ express().use(express.static(path.join(__dirname, 'public')))
     let signature = req.headers['stripe-signature'];
     console.log("signature retrieved from webhook? ", signature);
     console.log("event in body? ", req.body);
+    console.log("do we need promises? ", stripe.webhooks.constructEvent(req.body, signature, endpoint_secret));
     try {
       stripe.webhooks.constructEvent(req.body, signature, endpoint_secret).then(event => { 
         console.log("event generated? ", event);
-
+        console.log("event type? ", event.type);
         if(event.type === 'invoice.payment_succeeded'){
           // increment payments count
           // 1. get subscription line item
@@ -82,16 +83,16 @@ express().use(express.static(path.join(__dirname, 'public')))
             stripe.subscriptions.retrieve(sub.id).then( subscription => {
               console.log("subscription retrieved from stripe.subscriptions? ", subscription);
               subscription.metadata.installments_paid = count;
-              subscription.save()
+              subscription.save();
 
               if(count >= 2){
                 subscription.delete();
               }
               resp.status(200);
-            });
+            }).catch(serr => console.log('sub error: ', serr));
           }
         }
-      });
+      }).catch(everr => console.log("EVent error: ", everr));
     }
     catch(err){
       resp.status(400).json({error: err}); 
