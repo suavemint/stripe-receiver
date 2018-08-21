@@ -16,23 +16,23 @@ express().use(express.static(path.join(__dirname, 'public')))
   }).post('/process_payment', (req, resp) => {
     console.log("POST form body? ", req.body);
 
-    stripe.customers.create({
-      email: req.body.stripeEmail,
-      source: req.body.stripeToken
-    }).then(function(customer){
-      if(req.body.singlePayment){
-        console.log("FOUND SINGLE PAYMENT!"); 
+    if(req.body.singlePayment){
+      console.log("FOUND SINGLE PAYMENT!"); 
 
-        stripe.charges.create({
-          amount: 299700,
-          currency: 'usd',
-          description: 'test single charge',
-          source: customer.id 
-        }).then(function(charge){
-          console.log("Charge object returned? ", charge); 
-        });
-      }
-      else {
+      stripe.charges.create({
+        amount: 299700,
+        currency: 'usd',
+        description: 'test single charge',
+        source: req.body.stripeToken 
+      }).then(function(charge){
+        console.log("Charge object returned? ", charge); 
+      }).catch(cerr => console.log('charge error: ', cerr));
+    }
+    else {
+      stripe.customers.create({
+        email: req.body.stripeEmail,
+        source: req.body.stripeToken
+      }).then(function(customer){
         stripe.subscriptions.create({
           customer: customer.id,
           items: [
@@ -42,7 +42,6 @@ express().use(express.static(path.join(__dirname, 'public')))
           console.log("subscription? ", sub); 
           resp.status(200);
         }).catch( serr => console.log('sub error: ', serr));
-      }
-      console.log("customer has id or token? ", customer); 
-    }).catch(err => console.log('c err: ', err));
+      }).catch(err => console.log('customer error: ', err));
+    }
   }).listen(PORT, () => console.log(`Listening on port ${PORT}...`));
