@@ -2,47 +2,59 @@ const express = require('express');
 const path = require('path');
 const bodyparser = require('body-parser');
 
+// Set up db connection.
+const { Pool } = require('pg');
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: true
+});
+
 const PORT = process.env.PORT || 5000;
 
 // Currently config is empty, so use default private testing key
 const config = require('./config.json');
-const stripe = require('stripe')(config.secret_key || 'sk_test_BQokikJOvBiI2HlWgH4olfQ2');
+const stripe = require('stripe')(config.secret_key);
+// TODO use this in detecting valid webhook POSTS.
+const endpoint_secret = config.endpoint_secret;
 
 express().use(express.static(path.join(__dirname, 'public')))
   .use(bodyparser.json())
   .use(bodyparser.urlencoded({extended: true}))
-  .get('/', (req, resp) => {
-    resp.json({'hi': 'there'});
-  }).post('/process_payment', (req, resp) => {
-    console.log("POST form body? ", req.body);
+  .post('/process_payment', (req, resp) => {
+    //console.log("POST form body? ", req.body);
 
     if(req.body.singlePayment === true){
-      console.log("FOUND SINGLE PAYMENT!"); 
+     // console.log("FOUND SINGLE PAYMENT!"); 
 
       stripe.charges.create({
         amount: 299700,
         currency: 'usd',
         description: 'test single charge',
         source: req.body.stripeToken 
-      }).then(function(charge){
+      }).then(charge => {
         console.log("Charge object returned? ", charge); 
-        resp.status(200).json({});
+        //resp.status(200).json({});
+        resp.status(200).end();
       }).catch(cerr => console.log('charge error: ', cerr));
     }
     else {
-      console.log("FOUND SUBSCRIPTION");
+//      console.log("FOUND SUBSCRIPTION");
       stripe.customers.create({
         email: req.body.stripeEmail,
         source: req.body.stripeToken
-      }).then(function(customer){
+      }).then(customer => {
         stripe.subscriptions.create({
           customer: customer.id,
-          items: [
-            {plan: 'plan_DSVe2YxyuNPNTF'}
-          ]
-        }).then(function(sub){
-          console.log("subscription? ", sub); 
-          resp.status(200).json({});
+          items: [{
+            plan: 'plan_DSVe2YxyuNPNTF'
+          }],
+          metadata: {
+            installments_paid: 0 
+          }
+        }).then(sub => {
+          //console.log("subscription? ", sub); 
+          //resp.status(200).json({});
+          resp.status(200).end();
         }).catch( serr => console.log('sub error: ', serr));
       }).catch(err => console.log('customer error: ', err));
     }
@@ -51,4 +63,43 @@ express().use(express.static(path.join(__dirname, 'public')))
     //return resp.status(200);
     //resp.redirect('back');  // just redirects to get...
     //resp.end();  // just gives blank page
+  }).post('/handle_webhook', (req, resp) => {
+    console.log("/handle_webhook talking.");
+    let signature = req.headers['stripe-signature'];
+    console.log("signature retrieved from webhook? ", signature);
+
+    try {
+      let event = stripe.webhooks.constructEvent(req.body, signature, endpoint_secret); 
+      console.log("event generated? ", event);
+
+      if(event.type === 'invoice.payment_succeeded'){
+        // increment payments count
+        // 1. get subscription line item
+        console.log("going to incr... can see event.data.object.lines.data? ", event.data.object.lines.data);
+
+        // 2. get metadata value
+        let sub = event.data.object.lines.data[0];
+        console.log("going to incr...can see metadata? ", sub.metadata);
+        if(sub.metadata.installments_paid){
+          // Get count
+          let count = parseInt(sub.metadata.installments_paid);
+          console.log("parsed count? ", count);
+          count++;
+
+          let subscription = await stripe.subscriptions.retrieve(sub.id);
+          console.log("subscription retrieved from stripe.subscriptions? ", subscription);
+          subscription.metadata.installments_paid = count;
+          subscription.save()
+
+          if(count >= 2){
+            subscription.delete() 
+          }
+        }
+      }
+    }
+    catch(err){
+      res.status(400).end(); 
+    }
+
+    res.json({received: true});
   }).listen(PORT, () => console.log(`Listening on port ${PORT}...`));
