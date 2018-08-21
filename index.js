@@ -31,13 +31,13 @@ express().use(express.static(path.join(__dirname, 'public')))
       source: req.body.stripeToken
     }).then(function(customer){
       console.log("customer has id or token? ", customer); 
-      const subscription = stripe.subscriptions.create({
-        customer: customer.id,
-        items: [
-          {plan: 'prod_DS9nvwutZuzrce'}
-        ]
-      }).then(function(sub){
-        console.log("subscription? ", sub); 
-      });
-    });
+//      stripe.subscriptions.create({
+//        customer: customer.id,
+//        items: [
+//          {plan: 'prod_DS9nvwutZuzrce'}
+//        ]
+//      }).then(function(sub){
+//        console.log("subscription? ", sub); 
+//      }).catch( serr => console.log('sub error: ', serr));
+    }).catch(err => console.log('c err: ', err));
   }).listen(PORT, () => console.log(`Listening on port ${PORT}...`));
