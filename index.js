@@ -9,7 +9,7 @@ express().use(express.static(path.join(__dirname, 'public')))
   .get('/', (req, resp) => {
     resp.json({'hi': 'there'});
   }).post('/process_single_payment', (req, resp) => {
-    console.log("POST processed?, " resp.body);
+    console.log("POST processed? ", resp.body);
 
     const charge = stripe.charges.create({
       amount: parseFloat(resp.body.amount);
