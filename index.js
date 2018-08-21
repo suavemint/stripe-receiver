@@ -92,8 +92,8 @@ express().use(express.static(path.join(__dirname, 'public')))
       }
     }
     catch(err){
-      res.status(400).end(); 
+      resp.status(400).end(); 
     }
 
-    res.json({received: true});
+    resp.json({received: true});
   }).listen(PORT, () => console.log(`Listening on port ${PORT}...`));
