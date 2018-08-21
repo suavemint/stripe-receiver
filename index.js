@@ -48,7 +48,7 @@ express().use(express.static(path.join(__dirname, 'public')))
     }
     //resp.send('');  // just gives blank page
     //return resp.status(200);
-    //resp.status(200);
+    return resp.status(200);
     //resp.redirect('back');  // just redirects to get...
     //resp.end();  // just gives blank page
   }).listen(PORT, () => console.log(`Listening on port ${PORT}...`));
