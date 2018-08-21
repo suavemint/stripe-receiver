@@ -60,7 +60,7 @@ express().use(express.static(path.join(__dirname, 'public')))
     console.log("/handle_webhook talking.");
     let signature = req.headers['stripe-signature'];
     console.log("signature retrieved from webhook? ", signature);
-
+    console.log("event in body? ", req.body);
     try {
       let event = stripe.webhooks.constructEvent(req.body, signature, endpoint_secret); 
       console.log("event generated? ", event);
