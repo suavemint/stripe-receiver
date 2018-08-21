@@ -20,7 +20,7 @@ express().use(express.static(path.join(__dirname, 'public')))
 
   }).post('/process_subscription_payment', (req, resp) => {
     // For a subscription, create a Stripe Customer instance before creating a Subscription instance.
-    console.log("POST form body? ", req.body);
+    console.log("POST form body? ", req);
     const customer = stripe.customer.create({
       email: req.body.stripeEmail,
       source: req.body.stripeToken
