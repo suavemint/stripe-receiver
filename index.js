@@ -97,5 +97,5 @@ express().use(express.static(path.join(__dirname, 'public')))
         }
       //}).catch(everr => console.log("EVent error: ", everr));
 
-    //resp.json({received: true});
+    resp.json({received: true});
   }).listen(PORT, () => console.log(`Listening on port ${PORT}...`));
