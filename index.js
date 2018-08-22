@@ -62,7 +62,7 @@ express().use(express.static(path.join(__dirname, 'public')))
     console.log("signature retrieved from webhook? ", signature);
     console.log("event in body? ", req.body);
     console.log("do we need promises? ", stripe.webhooks.constructEvent(req.body, signature, endpoint_secret));
-    try {
+    //try {
       stripe.webhooks.constructEvent(req.body, signature, endpoint_secret).then(event => { 
         console.log("event generated? ", event);
         console.log("event type? ", event.type);
@@ -93,10 +93,10 @@ express().use(express.static(path.join(__dirname, 'public')))
           }
         }
       }).catch(everr => console.log("EVent error: ", everr));
-    }
-    catch(err){
+    //}
+    //catch(err){
       //resp.status(400).json(err); 
-      console.log("webhook error: ", err);
+      //console.log("webhook error: ", err);
     }
 
     //resp.json({received: true});
