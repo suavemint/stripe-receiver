@@ -61,12 +61,13 @@ express().use(express.static(path.join(__dirname, 'public')))
     let signature = req.headers['stripe-signature'];
     console.log("signature retrieved from webhook? ", signature);
     console.log("event in body? ", req.body);
+    var event = req.body;
     // Convert body to raw stream.
-    req.body = new Buffer(JSON.stringify(req.body), 'utf8');
+    //req.body = new Buffer(JSON.stringify(req.body), 'utf8');
     
-    console.log("do we need promises? ", stripe.webhooks.constructEvent(req.body, signature, endpoint_secret));
-      stripe.webhooks.constructEvent(req.body, signature, endpoint_secret).then(event => { 
-        console.log("event generated? ", event);
+    //console.log("do we need promises? ", stripe.webhooks.constructEvent(req.body, signature, endpoint_secret));
+      //stripe.webhooks.constructEvent(req.body, signature, endpoint_secret).then(event => { 
+       // console.log("event generated? ", event);
         console.log("event type? ", event.type);
         if(event.type === 'invoice.payment_succeeded'){
           // increment payments count
@@ -94,7 +95,7 @@ express().use(express.static(path.join(__dirname, 'public')))
             }).catch(serr => console.log('sub error: ', serr));
           }
         }
-      }).catch(everr => console.log("EVent error: ", everr));
+      //}).catch(everr => console.log("EVent error: ", everr));
 
     //resp.json({received: true});
   }).listen(PORT, () => console.log(`Listening on port ${PORT}...`));
