@@ -95,7 +95,8 @@ express().use(express.static(path.join(__dirname, 'public')))
       }).catch(everr => console.log("EVent error: ", everr));
     }
     catch(err){
-      resp.status(400).json(err); 
+      //resp.status(400).json(err); 
+      console.log("webhook error: ", err);
     }
 
     //resp.json({received: true});
