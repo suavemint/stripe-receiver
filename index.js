@@ -95,7 +95,7 @@ express().use(express.static(path.join(__dirname, 'public')))
       }).catch(everr => console.log("EVent error: ", everr));
     }
     catch(err){
-      resp.status(400).json({error: err}); 
+      resp.status(400).json(err); 
     }
 
     //resp.json({received: true});
