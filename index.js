@@ -61,8 +61,8 @@ express().use(express.static(path.join(__dirname, 'public')))
     let signature = req.headers['stripe-signature'];
     console.log("signature retrieved from webhook? ", signature);
     console.log("event in body? ", req.body);
-    console.log("do we need promises? ", stripe.webhooks.constructEvent(req.body, signature, endpoint_secret));
-      stripe.webhooks.constructEvent(req.body, signature, endpoint_secret).then(event => { 
+    console.log("do we need promises? ", stripe.webhooks.constructEvent(req.rawBody, signature, endpoint_secret));
+      stripe.webhooks.constructEvent(req.rawBody, signature, endpoint_secret).then(event => { 
         console.log("event generated? ", event);
         console.log("event type? ", event.type);
         if(event.type === 'invoice.payment_succeeded'){
