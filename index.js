@@ -62,9 +62,9 @@ express().use(express.static(path.join(__dirname, 'public')))
     console.log("signature retrieved from webhook? ", signature);
     console.log("event in body? ", req.body);
     // Convert body to raw stream.
-    req.body = new Buffer(req.body, 'utf8');
+    req.body = new Buffer(JSON.stringify(req.body), 'utf8');
     
-    console.log("do we need promises? ", stripe.webhooks.constructEvent(JSON.stringify(req.body), signature, endpoint_secret));
+    console.log("do we need promises? ", stripe.webhooks.constructEvent(req.body, signature, endpoint_secret));
       stripe.webhooks.constructEvent(req.body, signature, endpoint_secret).then(event => { 
         console.log("event generated? ", event);
         console.log("event type? ", event.type);
