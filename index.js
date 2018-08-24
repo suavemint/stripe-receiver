@@ -54,10 +54,10 @@ express().use(express.static(path.join(__dirname, 'public')))
     //resp.redirect('back');  // just redirects to get...
     //resp.end();  // just gives blank page
   }).post('/handle_webhook', (req, resp) => {
-    console.log("/handle_webhook talking.");
+    //console.log("/handle_webhook talking.");
     let signature = req.headers['stripe-signature'];
-    console.log("signature retrieved from webhook? ", signature);
-    console.log("event in body? ", req.body);
+    //console.log("signature retrieved from webhook? ", signature);
+    //console.log("event in body? ", req.body);
     var event = req.body;
     // Convert body to raw stream.
     //req.body = new Buffer(JSON.stringify(req.body), 'utf8');
@@ -65,7 +65,7 @@ express().use(express.static(path.join(__dirname, 'public')))
     //console.log("do we need promises? ", stripe.webhooks.constructEvent(req.body, signature, endpoint_secret));
       //stripe.webhooks.constructEvent(req.body, signature, endpoint_secret).then(event => { 
        // console.log("event generated? ", event);
-        console.log("event type? ", event.type);
+        //console.log("event type? ", event.type);
         if(event.type === 'invoice.payment_succeeded'){
           // increment payments count
           // 1. get subscription line item
@@ -81,16 +81,24 @@ express().use(express.static(path.join(__dirname, 'public')))
             count++;
 
             stripe.subscriptions.retrieve(sub.id).then( subscription => {
-              console.log("subscription retrieved from stripe.subscriptions? ", subscription);
+              //console.log("subscription retrieved from stripe.subscriptions? ", subscription);
               stripe.subscriptions.update(sub.id, {metadata: {installments_paid: count}});
               //subscription.metadata.installments_paid = count;
               //subscription.save();
 
               if(count >= 2){
-                subscription.delete();
+                console.log("Found a installments count >= 2 for subscription object retrieved? ", subscription);
+                stripe.subscriptions.del(subscription.id);
               }
+              else {
+                console.log("Found a installments count < 2 for subscription object retrieved? ", subscription);
+              }
+
               resp.status(200);
             }).catch(serr => console.log('sub error: ', serr));
+          }
+          else {
+            resp.status(200);  // FIXME don't need to respond to every call, as we only care about one ATM. 
           }
         }
       //}).catch(everr => console.log("EVent error: ", everr));
