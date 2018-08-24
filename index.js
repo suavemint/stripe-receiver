@@ -26,12 +26,10 @@ express().use(express.static(path.join(__dirname, 'public')))
         source: req.body.stripeToken 
       }).then(charge => {
         console.log("Charge object returned? ", charge); 
-        //resp.status(200).json({});
         resp.status(200).end();
       }).catch(cerr => console.log('charge error: ', cerr));
     }
     else {
-//      console.log("FOUND SUBSCRIPTION");
       stripe.customers.create({
         email: req.body.stripeEmail,
         source: req.body.stripeToken
@@ -45,8 +43,6 @@ express().use(express.static(path.join(__dirname, 'public')))
             installments_paid: 0 
           }
         }).then(sub => {
-          //console.log("subscription? ", sub); 
-          //resp.status(200).json({});
           resp.status(200).end();
         }).catch( serr => console.log('sub error: ', serr));
       }).catch(err => console.log('customer error: ', err));
@@ -85,8 +81,9 @@ express().use(express.static(path.join(__dirname, 'public')))
 
             stripe.subscriptions.retrieve(sub.id).then( subscription => {
               console.log("subscription retrieved from stripe.subscriptions? ", subscription);
-              subscription.metadata.installments_paid = count;
-              subscription.save();
+              stripe.subscriptions.update(sub.id, {metadata: {installments_paid: count}});
+              //subscription.metadata.installments_paid = count;
+              //subscription.save();
 
               if(count >= 2){
                 subscription.delete();
