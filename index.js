@@ -16,7 +16,7 @@ express().use(express.static(path.join(__dirname, 'public')))
   .post('/process_payment', (req, resp) => {
     console.log("POST form body? ", req.body);
 
-    if(req.body.singlePayment === true){
+    if(req.body.singlePayment === 'true'){
      console.log("CREATING SINGLE PAYMENT!"); 
 
       stripe.charges.create({
