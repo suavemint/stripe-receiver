@@ -14,7 +14,7 @@ express().use(express.static(path.join(__dirname, 'public')))
   .use(bodyparser.json())
   .use(bodyparser.urlencoded({extended: true}))
   .post('/process_payment', (req, resp) => {
-    //console.log("POST form body? ", req.body);
+    console.log("POST form body? ", req.body);
 
     if(req.body.singlePayment === true){
      console.log("CREATING SINGLE PAYMENT!"); 
